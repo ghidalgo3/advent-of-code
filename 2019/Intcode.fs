@@ -17,7 +17,8 @@ let decode program =
     | 99 -> Halt
     | _ -> Unknown
 
-let eval program =
+let eval p =
+    let program = { p with Memory = Array.copy p.Memory } 
     match decode program with
     | Add(r0, r1, r2) ->
         let a = program.Memory.[r0]
@@ -35,3 +36,10 @@ let rec run program =
     match decode program with 
     | Halt -> program
     | _ -> (eval >> run) program
+
+let allPairs xs =
+    seq {
+        for x in xs do
+            for y in xs do
+                yield (x, y)
+    }
