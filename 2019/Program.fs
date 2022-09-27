@@ -1,5 +1,6 @@
 ﻿open System.IO
 open Intcode
+open Wires
 
 let rec fuelRequirement mass =
     let req = mass / 3 - 2
@@ -40,7 +41,13 @@ let day2s input =
         |> List.exactlyOne
     100 * finalProgram.Noun + finalProgram.Verb
 
-
+let day3 input =
+    let lines = File.ReadAllLines(input)
+    let w1 = parseWire lines[0]
+    let w2 = parseWire lines[1]
+    [ for p in intersections w1 w2 -> manhattanLength p ]
+    |> List.filter (fun x -> x > 0)
+    |> List.min
 
 let one : int = day1 "input/1"
 printfn $"Day 1-2: {one}" 
@@ -48,3 +55,5 @@ let two : int = day2 "input/2"
 printfn $"Day 2-1: {two}" 
 let twos : int = day2s "input/2"
 printfn $"Day 2-2: {twos}" 
+let three : int = day3 "input/3"
+printfn $"Day 3: {three}" 
