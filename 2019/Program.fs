@@ -49,6 +49,25 @@ let day3 input =
     |> List.filter (fun x -> x > 0)
     |> List.min
 
+let day3s input =
+    let lines = File.ReadAllLines(input)
+    let w1 = parseWire lines[0]
+    let w2 = parseWire lines[1]
+    intersections w1 w2
+    |> List.filter (fun x -> (manhattanLength x) > 0)
+    |> List.map (fun p ->
+        // printfn $"lengthAlongWire of {p}"
+        let first = lengthAlongWire w1 p
+        // printfn $"First {first}"
+        let second = lengthAlongWire w2 p
+        // printfn $"Second {second}"
+        let r = (first, second)
+        r)
+    |> List.map (fun (uno, dos) -> uno + dos)
+    |> List.min
+
+
+
 let one : int = day1 "input/1"
 printfn $"Day 1-2: {one}" 
 let two : int = day2 "input/2"
@@ -57,3 +76,5 @@ let twos : int = day2s "input/2"
 printfn $"Day 2-2: {twos}" 
 let three : int = day3 "input/3"
 printfn $"Day 3: {three}" 
+let threes : int = day3s "input/3"
+printfn $"Day 3-2: {threes}" 
