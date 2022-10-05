@@ -1,6 +1,7 @@
 ﻿open System.IO
 open Intcode
 open Wires
+open Numbers
 
 let rec fuelRequirement mass =
     let req = mass / 3 - 2
@@ -66,6 +67,14 @@ let day3s input =
     |> List.map (fun (uno, dos) -> uno + dos)
     |> List.min
 
+let day4 min max =
+    let notAllUnique hist = Map.exists (fun d f -> f > 1) hist
+    let requirements = [ isNonDecreasing ; strangeCriteria ; (digits >> freq >> notAllUnique) ]
+    let applyRequirements booleanFunctions n =
+        List.fold (fun accum f -> accum && f n) true booleanFunctions
+    [ for n in min .. max -> applyRequirements requirements n ]
+    |> List.filter (fun b -> b)
+    |> List.length
 
 
 let one : int = day1 "input/1"
@@ -78,3 +87,4 @@ let three : int = day3 "input/3"
 printfn $"Day 3: {three}" 
 let threes : int = day3s "input/3"
 printfn $"Day 3-2: {threes}" 
+printfn $"Day 4: {day4 138307 654504}"
