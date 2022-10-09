@@ -78,7 +78,7 @@ let day4 min max =
 
 let day5 input =
     let input = [| for n in File.ReadAllText("input/5").Split(",") -> int n |]
-    let mutable program = { Memory = input ; PC = 0 ; Output = 0}
+    let program = { Memory = input ; PC = 0 ; Output = 0}
     let finalState = run program
     finalState.Output
 
