@@ -20,7 +20,7 @@ let day2 input =
     let input = [| for n in File.ReadAllText(input).Split(",") -> int n |]
     input.[1] <- 12
     input.[2] <- 2
-    let program = { Memory = input ; PC = 0 }
+    let program = { Memory = input ; PC = 0 ; Output = 0}
     let finalState = run program
     finalState.Memory.[0]
 
@@ -31,7 +31,7 @@ let day2s input =
             let mem = Array.copy input
             mem.[1] <- noun
             mem.[2] <- verb
-            let program = { Memory = mem ; PC = 0 }
+            let program = { Memory = mem ; PC = 0 ; Output = 0}
             // an anonymous record! like a C# anonymous type
             {| P = run program ; Noun = noun ; Verb = verb |}
             // printfn $"p({noun}, {verb}) = {f.Memory.[0]}"
@@ -76,6 +76,11 @@ let day4 min max =
     |> List.filter (fun b -> b)
     |> List.length
 
+let day5 input =
+    let input = [| for n in File.ReadAllText("input/5").Split(",") -> int n |]
+    let mutable program = { Memory = input ; PC = 0 ; Output = 0}
+    let finalState = run program
+    finalState.Output
 
 let one : int = day1 "input/1"
 printfn $"Day 1-2: {one}" 
@@ -88,3 +93,5 @@ printfn $"Day 3: {three}"
 let threes : int = day3s "input/3"
 printfn $"Day 3-2: {threes}" 
 printfn $"Day 4: {day4 138307 654504}"
+let five : int = day5 "input/5"
+printfn $"Day 5: {five}"

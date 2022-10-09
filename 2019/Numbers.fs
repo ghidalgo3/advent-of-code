@@ -37,3 +37,10 @@ let strangeCriteria n =
     |> List.windowed 2
     |> freq
     |> Map.exists (fun pair f -> pair[0] = pair[1] && f = 1)
+
+let padZeros padding (ns : int list) : int list = 
+    if (ns.Length >= padding) then
+        ns
+    else
+        let zeros = List.init (padding - ns.Length) (fun n -> 0)
+        zeros @ ns

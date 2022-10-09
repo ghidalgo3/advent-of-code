@@ -1,35 +1,72 @@
 module Intcode
 
+open Numbers
+
 type Program = {
     Memory : int array
-    PC : int }
+    PC : int
+    Output : int}
+
+type Parameter = 
+| Position of int
+| Immediate of int
 
 type Instruction =
-| Add of int * int * int
-| Mult of int * int * int
-| Halt
-| Unknown
+| Add of Parameter * Parameter * Parameter
+| Mult of Parameter * Parameter * Parameter
+| Input of Parameter
+| Output of Parameter
+| Halt 
+| Unknown of int list
 
 let decode program =
-    match program.Memory.[program.PC] with
-    | 1 -> Add(program.Memory.[program.PC + 1], program.Memory.[program.PC + 2], program.Memory.[program.PC + 3])
-    | 2 -> Mult(program.Memory.[program.PC + 1], program.Memory.[program.PC + 2], program.Memory.[program.PC + 3])
-    | 99 -> Halt
-    | _ -> Unknown
+    let instruction = (digits >> padZeros 5) program.Memory.[program.PC]
+
+    let parameter mode arg = 
+        match mode with 
+        | 0 -> Position(arg)
+        | 1 -> Immediate(arg)
+
+    match instruction with
+    | [p3; p2; p1; 0; 1] ->
+        // p1 // p2 then p3
+        Add(
+            parameter p1 program.Memory.[program.PC + 1],
+            parameter p2 program.Memory.[program.PC + 2],
+            parameter 1 program.Memory.[program.PC + 3])
+    | [p3; p2; p1; 0; 2] ->
+        Mult(
+            parameter p1 program.Memory.[program.PC + 1],
+            parameter p2 program.Memory.[program.PC + 2],
+            parameter 1 program.Memory.[program.PC + 3])
+    | [p3; p2; p1; 0; 3] ->
+        Input(
+            parameter 1 program.Memory[program.PC + 1])
+    | [p3; p2; p1; 0; 4] ->
+        Output(
+            parameter p1 program.Memory[program.PC + 1])
+    | [p1; p2; p3; 9; 9] -> Halt
+    | unknown -> Unknown(unknown)
 
 let eval p =
     let program = { p with Memory = Array.copy p.Memory } 
+    let deref parameter = 
+        match parameter with 
+        | Immediate(n) -> n
+        | Position(a) -> program.Memory[a]
     match decode program with
-    | Add(r0, r1, r2) ->
-        let a = program.Memory.[r0]
-        let b = program.Memory.[r1]
-        program.Memory.[r2] <- a + b
+    | Add(p0, p1, p2) ->
+        // printfn $"mem[{deref p2}] = {deref p0} + {deref p1}"
+        program.Memory.[deref p2] <- deref p0 + deref p1
         { program with PC = program.PC + 4 }
-    | Mult(r0, r1, r2) ->
-        let a = program.Memory.[r0]
-        let b = program.Memory.[r1]
-        program.Memory.[r2] <- a * b
+    | Mult(p0, p1, p2) ->
+        program.Memory.[deref p2] <- deref p0 * deref p1
         { program with PC = program.PC + 4 }
+    | Input(addr) ->
+        program.Memory.[deref addr] <- 1
+        { program with PC = program.PC + 2 }
+    | Output(addr) ->
+        { program with PC = program.PC + 2 ; Output = deref addr}
     | _ -> program
 
 let rec run program =
