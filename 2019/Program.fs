@@ -20,7 +20,7 @@ let day2 input =
     let input = [| for n in File.ReadAllText(input).Split(",") -> int n |]
     input.[1] <- 12
     input.[2] <- 2
-    let program = { Memory = input ; PC = 0 ; Output = 0}
+    let program = { Memory = input ; PC = 0 ; Output = 0 ; Input = 1}
     let finalState = run program
     finalState.Memory.[0]
 
@@ -31,7 +31,7 @@ let day2s input =
             let mem = Array.copy input
             mem.[1] <- noun
             mem.[2] <- verb
-            let program = { Memory = mem ; PC = 0 ; Output = 0}
+            let program = { Memory = mem ; PC = 0 ; Output = 0; Input = 1}
             // an anonymous record! like a C# anonymous type
             {| P = run program ; Noun = noun ; Verb = verb |}
             // printfn $"p({noun}, {verb}) = {f.Memory.[0]}"
@@ -78,7 +78,7 @@ let day4 min max =
 
 let day5 input =
     let input = [| for n in File.ReadAllText("input/5").Split(",") -> int n |]
-    let program = { Memory = input ; PC = 0 ; Output = 0}
+    let program = { Memory = input ; PC = 0 ; Output = 0 ; Input = 5}
     let finalState = run program
     finalState.Output
 
