@@ -17,11 +17,23 @@ type GraphTests () =
 
     [<TestMethod>]
     member this.AddOneEdge() = 
+        // A -> B
         let g =  addEdge "A" "B" (DirectedGraph<string>.empty ())
         Assert.AreEqual(2, g.Edges.Keys |> Seq.length)
         Assert.AreEqual(2, g.Vertices.Length)
         Assert.AreEqual(0, g.Edges["B"].Length)
         Assert.AreEqual(1, g.Edges["A"].Length)
+
+    [<TestMethod>]
+    member this.AddOneEdgeThenReverse() = 
+        // A -> B
+        // then
+        // B -> A
+        let g =  addEdge "A" "B" (DirectedGraph<string>.empty ()) |> reverse
+        Assert.AreEqual(2, g.Edges.Keys |> Seq.length)
+        Assert.AreEqual(2, g.Vertices.Length)
+        Assert.AreEqual(1, g.Edges["B"].Length)
+        Assert.AreEqual(0, g.Edges["A"].Length)
 
     [<TestMethod>]
     member this.AddNewEdge() = 
@@ -52,10 +64,7 @@ type GraphTests () =
         Assert.AreEqual(2, g.Edges["A"].Length)
         Assert.AreEqual(
             3,
-            g.Edges.Values
-            |> Seq.filter (fun es -> es.Length > 0)
-            |> Seq.collect id 
-            |> Seq.length)
+            edges g |> Seq.length)
 
     [<TestMethod>]
     member this.AddDuplicateEdge() = 
@@ -85,8 +94,5 @@ type GraphTests () =
         Assert.AreEqual(1, g.Edges["C"].Length)
         Assert.AreEqual(
             3,
-            g.Edges.Values
-            |> Seq.filter (fun es -> es.Length > 0)
-            |> Seq.collect id 
-            |> Seq.length)
+            edges g |> Seq.length)
     

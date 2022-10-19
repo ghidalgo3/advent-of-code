@@ -12,6 +12,18 @@ and DirectedEdge<'T> =
     { From : 'T
       To   : 'T }
 
+// what we need to do is to traverse the graph with a DFS, keep track of the depth and collect all
+// of the direct and indirect orbits.
+// Ok so we need to find the root which is made easy because there is a COM object.
+// let root = graph.Edges |> List.find "COM"
+
+// let countAllDirectOrbits graph = 
+
+let edges graph = 
+    graph.Edges.Values
+    |> Seq.filter (fun es -> es.Length > 0)
+    |> Seq.collect id 
+
 let addEdge (vertex1 : 'T) (vertex2: 'T) (graph : DirectedGraph<'T>) = 
     // create the new vertices if they don't exist
     // let newEdge = { From = vertex1 ; To = vertex2 }
@@ -40,6 +52,10 @@ let addEdge (vertex1 : 'T) (vertex2: 'T) (graph : DirectedGraph<'T>) =
         { graph with 
             Edges = Map.change vertex1 appendVertex graph.Edges}
     | _ -> graph
+
+let reverse (graph : DirectedGraph<'T>) =
+    (DirectedGraph<'T>.empty (), edges graph)
+    ||> Seq.fold (fun accum edge -> addEdge edge.To edge.From accum )
 
 // // input is the multi-line string from the examples
 // let parseGraph input = 
