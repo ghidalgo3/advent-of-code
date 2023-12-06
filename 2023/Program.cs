@@ -1,14 +1,54 @@
 ﻿// See https://aka.ms/new-console-template for more information
-int GetCalibrationValue(string text)
+using System.Text.RegularExpressions;
+string? GetMatchingGroupName(Match match, Regex regex)
 {
-    List<int> numbers = new();
-    foreach (char c in text)
+    foreach (var groupName in regex.GetGroupNames().Skip(1))
     {
-        if (c >= '0' && c <= '9')
+        if (match.Groups[groupName].Success)
         {
-            numbers.Add(c - '0');
+            return groupName;
         }
     }
+
+    return null;
+}
+
+int GetCalibrationValue(string text)
+{
+    Regex numberRegex = new("(?<one>one|1)|(?<two>two|2)|(?<three>three|3)|(?<four>four|4)|(?<five>five|5)|(?<six>six|6)|(?<seven>seven|7)|(?<eight>eight|8)|(?<nine>nine|9)");
+    List<int> numbers = new();
+    int startAt = 0;
+    while (startAt < text.Length)
+    {
+        var match = numberRegex.Match(text, startAt);
+        if (match.Success)
+        {
+            var groupName = GetMatchingGroupName(match, numberRegex);
+            Console.WriteLine(groupName);
+            numbers.Add(groupName switch
+            {
+                "one" => 1,
+                "two" => 2,
+                "three" => 3,
+                "four" => 4,
+                "five" => 5,
+                "six" => 6,
+                "seven" => 7,
+                "eight" => 8,
+                "nine" => 9
+            });
+            startAt = match.Index + 1;
+        }
+        else
+        {
+            break;
+        }
+    }
+    // foreach (Match match in matches)
+    // {
+    //     var groupName = match.Groups[0].Value;
+    // }
+
     if (numbers.Count == 1)
     {
         return numbers[0] * 10 + numbers[0];
