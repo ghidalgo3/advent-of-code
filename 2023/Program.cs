@@ -24,7 +24,7 @@ int GetCalibrationValue(string text)
         if (match.Success)
         {
             var groupName = GetMatchingGroupName(match, numberRegex);
-            Console.WriteLine(groupName);
+            // Console.WriteLine(groupName);
             numbers.Add(groupName switch
             {
                 "one" => 1,
@@ -58,5 +58,13 @@ int GetCalibrationValue(string text)
         return numbers[0] * 10 + numbers[numbers.Count - 1];
     }
 }
-
+// day 1
+Console.Write("Day 1: ");
 Console.WriteLine(File.ReadAllLines("input/1").Select(GetCalibrationValue).Sum());
+
+Console.Write("Day 2-1: ");
+var game = new Game(12, 13, 14);
+var day2Input = File.ReadAllLines("input/2");
+Console.WriteLine(day2Input.Select((l, idx) => (game.IsPossible(l), idx + 1)).Where((p, i) => p.Item1).Sum(g => g.Item2));
+Console.Write("Day 2-2: ");
+Console.WriteLine(day2Input.Select(l => game.Minimum(l)).Sum(g => g.Power));
